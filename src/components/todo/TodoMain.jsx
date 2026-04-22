@@ -18,19 +18,19 @@ const TodoMain = () => {
   const todoDatas = [
     {
       id: "todo_1",
-      todo: "React Component Master 3",
+      todo: "React Component Master",
       dueDate: "2026-04-22",
       priority: 1,
     },
     {
       id: "todo_2",
-      todo: "Master 할 수 있겠어?",
+      todo: "React Component Master 2",
       dueDate: "2026-04-23",
       priority: 2,
     },
     {
       id: "todo_3",
-      todo: "너 개몬하잖아 ㅋ",
+      todo: "React Component Master 3",
       dueDate: "2026-04-24",
       priority: 3,
     },
