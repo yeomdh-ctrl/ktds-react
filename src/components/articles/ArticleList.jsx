@@ -1,24 +1,18 @@
-const ArticleList = ({ articles }) => {
+/** @format */
+
+const ArticleList = ({ contents }) => {
   return (
     <tbody>
-      {articles.map((article) => (
-        <>
-          <tr>
-            <td>{article.id}</td>
-            <td>{article.subject}</td>
-            <td>{article.email}</td>
-            <td>{article.viewCnt}</td>
-            <td>{article.crtDt}</td>
-          </tr>
-          <tr>
-            <td>제목: {article.subject}</td>
-            <td>이메일: {article.email}</td>
-            <td>이름: {article.membersVO.name}</td>
-          </tr>
-          <tr>
-            <td>내용: {article.content}</td>
-          </tr>
-        </>
+      {contents.map((article) => (
+        <tr key={article.id}>
+          <td>{article.id}</td>
+          <td>{article.subject}</td>
+          <td>
+            {article.membersVO.name}({article.membersVO.email})
+          </td>
+          <td>{article.viewCnt}</td>
+          <td>{article.crtDt}</td>
+        </tr>
       ))}
     </tbody>
   );

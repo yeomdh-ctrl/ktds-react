@@ -1,4 +1,5 @@
 const TodoAppender = ({
+  inputData: { todo, dueDate, priority },
   onTaskKeyUp,
   onDateChange,
   onPrioritySelectChange,
@@ -6,9 +7,14 @@ const TodoAppender = ({
 }) => {
   return (
     <footer>
-      <input type="text" placeholder="Task" onKeyUp={onTaskKeyUp} />
-      <input type="date" onChange={onDateChange} />
-      <select onChange={onPrioritySelectChange}>
+      <input
+        type="text"
+        placeholder="Task"
+        onChange={onTaskKeyUp}
+        value={todo}
+      />
+      <input type="date" onChange={onDateChange} value={dueDate} />
+      <select onChange={onPrioritySelectChange} value={priority}>
         <option>우선순위</option>
         <option value="1">높음</option>
         <option value="2">보통</option>

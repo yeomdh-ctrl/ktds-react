@@ -1,19 +1,17 @@
+/** @format */
+
 const ArticleHeader = () => {
   return (
     <thead>
       <tr>
-        <h1>
-          <th>게시글 작성</th>
-        </h1>
-      </tr>
-      <tr>
-        <td>ID</td>
-        <td>Subject</td>
-        <td>Writer</td>
-        <td>View</td>
-        <td>crtDt</td>
+        <th>ID</th>
+        <th>Subject</th>
+        <th>Writer</th>
+        <th>View</th>
+        <th>Write Datetime</th>
       </tr>
     </thead>
   );
 };
+
 export default ArticleHeader;
