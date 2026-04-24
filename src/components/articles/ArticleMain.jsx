@@ -8,6 +8,7 @@ import ArticleWriter from "./ArticleWriter.jsx";
 
 const ArticleMain = () => {
   const [articles, setArticles] = useState(articleData.articles);
+  const [view, setView] = useState(false);
   const [{ subject, membersVO, email, content }, setNewArticleData] = useState({
     subject: "",
     membersVO: "",
@@ -86,6 +87,12 @@ const ArticleMain = () => {
       email: "",
       content: "",
     });
+    setView(false);
+    console.log(view);
+  };
+  const onWriteButtonClickHandler = () => {
+    setView(true);
+    console.log(view);
   };
   console.log(articleData);
   return (
@@ -95,15 +102,20 @@ const ArticleMain = () => {
         <ArticleHeader />
         <ArticleList contents={articles} />
       </table>
-      <ArticleWriter
-        inputData={{ subject, membersVO, email, content }}
-        onSubjectChange={onSubjectChangeHandler}
-        onNameChange={onNameChangeHandler}
-        onEmailChange={onEmailChangeHandler}
-        onContentChange={onContentChangeHandler}
-        onSaveButtonClick={onSaveButtonClickHandler}
-        onCancelButtonClick={onCancelButtonClickHandler}
-      />
+      {view ? (
+        <button onClick={onWriteButtonClickHandler}>글쓰기</button>
+      ) : (
+        <ArticleWriter
+          inputData={{ subject, membersVO, email, content }}
+          onSubjectChange={onSubjectChangeHandler}
+          onNameChange={onNameChangeHandler}
+          onEmailChange={onEmailChangeHandler}
+          onContentChange={onContentChangeHandler}
+          onSaveButtonClick={onSaveButtonClickHandler}
+          onCancelButtonClick={onCancelButtonClickHandler}
+          onWriteButtonClick={onWriteButtonClickHandler}
+        />
+      )}
     </div>
   );
 };
