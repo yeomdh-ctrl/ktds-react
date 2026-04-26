@@ -102,7 +102,7 @@ const ArticleMain = () => {
         <ArticleHeader />
         <ArticleList contents={articles} />
       </table>
-      {view ? (
+      {!view ? (
         <button onClick={onWriteButtonClickHandler}>글쓰기</button>
       ) : (
         <ArticleWriter
