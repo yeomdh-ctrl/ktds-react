@@ -5,119 +5,64 @@ import ArticleHeader from "./ArticleHeader.jsx";
 import ArticleList from "./ArticleList.jsx";
 import articleData from "./articles.json";
 import ArticleWriter from "./ArticleWriter.jsx";
+import ArticleWriter2 from "./ArticleWriter2.jsx";
 
 const ArticleMain = () => {
+  // state를 변경했다!
+  // 컴포넌트가 재실행된다. (props의 전달 여부 관계 없이.)
+  console.log("ArticleMain");
+
   const [articles, setArticles] = useState(articleData.articles);
-  const [view, setView] = useState(false);
-  const [{ subject, membersVO, email, content }, setNewArticleData] = useState({
-    subject: "",
-    membersVO: "",
-    email: "",
-    content: "",
-  });
 
-  const onSubjectChangeHandler = (event) => {
-    setNewArticleData((prevData) => ({
-      ...prevData,
-      subject: event.target.value,
-    }));
-  };
-  const onNameChangeHandler = (event) => {
-    const obj = {};
-    obj.name = event.target.value;
-    obj.email = "admin@gmail.com";
+  const onAddArticleClickHandler = (subject, name, email, content) => {
+    const lpad = (str, length, defaultCharacter) => {
+      const remainLength = length - (str + "").length;
+      return defaultCharacter.repeat(remainLength) + str;
+    };
 
-    setNewArticleData((prevData) => ({
-      ...prevData,
-      membersVO: obj,
-    }));
-  };
-  const onEmailChangeHandler = (event) => {
-    setNewArticleData((prevData) => ({
-      ...prevData,
-      email: event.target.value,
-    }));
-  };
-  const onContentChangeHandler = (event) => {
-    setNewArticleData((prevData) => ({
-      ...prevData,
-      content: event.target.value,
-    }));
-  };
-  const onSaveButtonClickHandler = () => {
-    console.log("저장");
-    console.log({ subject, membersVO, email, content });
+    const getDateTime = (format) => {
+      const now = new Date();
+
+      return format
+        .replaceAll("YYYY", now.getFullYear())
+        .replaceAll("MM", lpad(now.getMonth() + 1, 2, "0"))
+        .replaceAll("DD", lpad(now.getDate(), 2, "0"))
+        .replaceAll("HH", lpad(now.getHours(), 2, "0"))
+        .replaceAll("mm", lpad(now.getMinutes(), 2, "0"))
+        .replaceAll("ss", lpad(now.getSeconds(), 2, "0"));
+    };
+
+    const makeId = (index) => {
+      const seq = lpad(index, 6, "0");
+      return `BO-${getDateTime("YYYYMMDD-")}${seq}`;
+    };
+
     setArticles((prevData) => [
       ...prevData,
       {
-        id: prevData.length + 1,
+        id: makeId(prevData.length + 1),
         subject,
         content,
         email,
-        viewCnt: 0,
-        crtDt: "2026-04-23 18:10:11",
-        mdfyDt: "2026-04-23 18:15:23",
-        fileGroupId: "FG-20260423-000001",
-        membersVO,
-        files: [
-          {
-            fileNum: 1,
-            fileGroupId: "FG-20260423-000001",
-            displayName: "Testfile.exe",
-            fileLength: 15000,
-          },
-        ],
+        viewCnt: parseInt(Math.random() * 10000),
+        crtDt: getDateTime("YYYY-MM-DD HH:mm:ss"),
+        mdfyDt: null,
+        fileGroupId: null,
+        membersVO: { email, name },
+        files: [],
       },
     ]);
-    console.log(articles);
-
-    setNewArticleData({
-      subject: "",
-      membersVO: { name: "" },
-      email: "",
-      content: "",
-    });
-    console.log("끝2");
   };
 
-  const onCancelButtonClickHandler = () => {
-    setNewArticleData({
-      subject: "",
-      membersVO: { name: "" },
-      email: "",
-      content: "",
-    });
-    setView(false);
-    console.log(view);
-  };
-  const onWriteButtonClickHandler = () => {
-    setView(true);
-    console.log(view);
-  };
-  console.log(articleData);
   return (
     <div className="wrapper">
-      <div>{articleData.articles.length}개의 게시글이 검색되었습니다.</div>
+      <div>{articles.length}개의 게시글이 검색되었습니다.</div>
       <table>
         <ArticleHeader />
         <ArticleList contents={articles} />
       </table>
-      {view ? (
-        <button onClick={onWriteButtonClickHandler}>글쓰기</button>
-      ) : (
-        <ArticleWriter
-          inputData={{ subject, membersVO, email, content }}
-          onSubjectChange={onSubjectChangeHandler}
-          onNameChange={onNameChangeHandler}
-          onEmailChange={onEmailChangeHandler}
-          onContentChange={onContentChangeHandler}
-          onSaveButtonClick={onSaveButtonClickHandler}
-          onCancelButtonClick={onCancelButtonClickHandler}
-          onWriteButtonClick={onWriteButtonClickHandler}
-        />
-      )}
+      <ArticleWriter onAddArticleClick={onAddArticleClickHandler} />
     </div>
   );
 };
-
 export default ArticleMain;

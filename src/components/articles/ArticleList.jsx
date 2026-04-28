@@ -1,6 +1,8 @@
 /** @format */
 
 const ArticleList = ({ contents }) => {
+  console.log("ArticleList");
+
   return (
     <tbody>
       {contents.map((article) => (

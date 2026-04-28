@@ -1,24 +1,25 @@
-// ecma function(fat arrow function)
-// const : 상수를 정의하는 키워드
-// let : 변수를 정의하는 키워드
-// (parameter) => {function body} : fat arrow function
-// const abc = () => {};
+/** @format */
 
 import { useState } from "react";
 import { StateTest } from "./StateTest.jsx";
 import TodoAppender from "./TodoAppender.jsx";
 import TodoHeader from "./TodoHeader.jsx";
-import TodoItem from "./TodoItem.jsx";
 import TodoList from "./TodoList.jsx";
 
-// function과 fat arrow function의 기능적 차이
-// 1. function은 함수를 호출한 대상을 this 객체로 알 수 있다.
-// 2. fat arrow function은 this 키워드 사용 X, event 파라미터로만 알 수 있음.
+// ecma function (fat arrow function)
+// const: 상수를 정의하는 키워드.
+// (parameter) => {function body} : fat arrow function
+// const abc = () => {};
 
-// export default 이후에 const 키워드가 나타날 수 없다. 아래 const에서 에러 발생
-// export default const TodoMain = () => {};
+// function과 fat arrow function의 기능적 차이.
+// function => 함수를 호출한 대상을 this 객체로 알 수 있다.
+// fat arrow function => this 키워드 사용 불가.
+//         함수를 호출한 대상을 알 수 없다? event 파라미터로만 알 수 있음.
 
+// export default 이후에 const 키워드가 나타날 수 없음.
 const TodoMain = () => {
+  // const ==> 상수 정의
+  // let ==> 변수 정의
   // TODO JSON DATA
   const todoDatas = [
     {
@@ -45,83 +46,52 @@ const TodoMain = () => {
   ];
 
   const [cachedData, setCachedData] = useState(todoDatas);
-  const [{ todo, dueDate, priority }, setNewTodoData] = useState({
-    todo: "",
-    dueDate: "",
-    priority: 0,
-  });
 
-  const isAllDoneChangeHandler = (isDone) => {
+  const onAllDoneChangeHandler = (isDone) => {
     setCachedData((prevData) => {
-      // cachedData를 반복하면서 모든 isDone의 값을 변경한다
+      // cachedData를 반복하면서 모든 isDone의 값을 변경한다.
       const newData = prevData.map((todo) => ({ ...todo, isDone }));
-      // 변경된 결과를 반환
+      // 변경된 결과를 반환한다.
       return newData;
     });
   };
 
-  // 특정 todo의 isDone 값을 반전시키는 함수
-  // 이 함수를 TodoList에게 props로 전달
-  // TodoList는 TodoItem에게 props로 전달
+  // 특정 todo의 isDone 값을 반전시키는 함수.
+  // 이 함수를 TodoList에게 props로 전달.
+  // TodoList는 TodoItem에게 함수를 props 전달.
   const onDoneChangeHandler = (todoId, isDone) => {
     setCachedData((prevData) => {
       const newStateMemory = [...prevData];
 
-      // java의 forEach와 같은 동작 방식
+      // java for each
       for (const todo of newStateMemory) {
-        if (todo.id == todoId) {
+        if (todo.id === todoId) {
           todo.isDone = isDone;
           break;
         }
       }
       return newStateMemory;
     });
-    console.log(todoId, todoDatas);
   };
 
-  // 밖에서 함수 만들어서 넣어주기
-  const onTaskKeyUpHandler = (event) => {
-    console.log(event.target.value);
-    setNewTodoData((prevData) => ({ ...prevData, todo: event.target.value }));
-  };
-  const onDateChangeHandler = (event) => {
-    console.log(event.target.value);
-    setNewTodoData((prevData) => ({
-      ...prevData,
-      dueDate: event.target.value,
-    }));
-  };
-  const onSaveButtonClickHandler = () => {
-    console.log("저장합니다");
+  const onSaveButtonClickHandler = (todo, dueDate, priority) => {
+    console.log("저장합니다.");
     setCachedData((prevData) => [
       ...prevData,
       { id: prevData.length + 1, todo, dueDate, priority, isDone: false },
     ]);
-    setNewTodoData({ todo: "", dueDate: "", priority: "" });
   };
-  const onPrioritySelectChangeHandler = (event) => {
-    console.log(event.target.value);
-    setNewTodoData((prevData) => ({
-      ...prevData,
-      priority: parseInt(event.target.value),
-    }));
-  };
-  // component가 만들어줄 HTML tag set 반환
+
+  // 컴포넌트가 만들어줄 HTML Tag set를 반환.
   return (
     <div className="wrapper">
       {/* <StateTest /> */}
       <header>React Todo</header>
       <ul className="tasks">
-        <TodoHeader onAllDoneChange={isAllDoneChangeHandler} />
+        <TodoHeader onAllDoneChange={onAllDoneChangeHandler} />
         <TodoList todoDatas={cachedData} onDoneChange={onDoneChangeHandler} />
       </ul>
-      <TodoAppender
-        inputData={{ todo, dueDate, priority }}
-        onDateChange={onDateChangeHandler}
-        onTaskKeyUp={onTaskKeyUpHandler}
-        onSaveButtonClick={onSaveButtonClickHandler}
-        onPrioritySelectChange={onPrioritySelectChangeHandler}
-      />
+      <TodoAppender onSaveButtonClick={onSaveButtonClickHandler} />
     </div>
   );
 };

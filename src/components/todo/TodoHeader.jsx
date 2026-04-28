@@ -1,10 +1,40 @@
+import { useRef } from "react";
+import { Confirm } from "../ui/Modals";
+
 const TodoHeader = ({ onAllDoneChange }) => {
-  const onAllDoneChangeHandler = (event) => {
-    onAllDoneChange(event.target.checked);
+  const checkboxRef = useRef();
+  const confirmRef = useRef();
+  const onAllDoneChangeHandler = () => {
+    const checked = checkboxRef.current.checked;
+    let message = "";
+    if (checked) {
+      message = "모든 아이템들을 완료";
+    } else {
+      message = "모든 아이템들을 미완료";
+    }
+    confirmRef.current.showConfirm(message);
   };
+
+  const onConfirmOkClickHandler = () => {
+    onAllDoneChange(checkboxRef.current.checked);
+  };
+  const onConfirmCloseClickHandler = () => {
+    checkboxRef.current.checked = !checkboxRef.current.checked;
+  };
+
   return (
     <li className="tasks-header">
-      <input id="checkall" type="checkbox" onChange={onAllDoneChangeHandler} />
+      <Confirm
+        dialogRef={confirmRef}
+        onOkClick={onConfirmOkClickHandler}
+        onCloseClick={onConfirmCloseClickHandler}
+      />
+      <input
+        id="checkall"
+        type="checkbox"
+        ref={checkboxRef}
+        onChange={onAllDoneChangeHandler}
+      />
       <label>Task</label>
       <span className="due-date">Due date</span>
       <span className="priority">Priority</span>
