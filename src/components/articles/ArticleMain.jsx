@@ -61,7 +61,20 @@ const ArticleMain = () => {
         <ArticleHeader />
         <ArticleList contents={articles} />
       </table>
-      <ArticleWriter onAddArticleClick={onAddArticleClickHandler} />
+      {!view ? (
+        <button onClick={onWriteButtonClickHandler}>글쓰기</button>
+      ) : (
+        <ArticleWriter
+          inputData={{ subject, membersVO, email, content }}
+          onSubjectChange={onSubjectChangeHandler}
+          onNameChange={onNameChangeHandler}
+          onEmailChange={onEmailChangeHandler}
+          onContentChange={onContentChangeHandler}
+          onSaveButtonClick={onSaveButtonClickHandler}
+          onCancelButtonClick={onCancelButtonClickHandler}
+          onWriteButtonClick={onWriteButtonClickHandler}
+        />
+      )}
     </div>
   );
 };
