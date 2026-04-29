@@ -7,18 +7,24 @@ import trendData from "./trend.json";
 
 const TrendBox = () => {
   //   const [{ sectionName, selectors, items }] = useState(trendData);
-  const [{ sectionName, selectors, items }] = useState(trendData);
+  const [{ sectionName, selectors, selectorsKR, items }] = useState(trendData);
+  const [active, setActive] = useState(selectors[0]);
+  const onSelectChangeHandler = (event) => {
+    setActive(event.target.value);
+  };
   return (
     <>
       <div className="wrapper">
         <TrendHeader>
           <h2>
             {sectionName}
-            <TrendSelector />
+            <TrendSelector onSelectChange={onSelectChangeHandler} />
           </h2>
         </TrendHeader>
         <TrendList>
-          <TrendItem />
+          {items[active].map((movie) => (
+            <TrendItem key={movie.id} item={movie} />
+          ))}
         </TrendList>
       </div>
     </>

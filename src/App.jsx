@@ -8,8 +8,8 @@ import TodoMain from "./components/todo/TodoMain.jsx";
 import TrendBox from "./components/trends/TrendBox.jsx";
 export default function App() {
   // return <TodoMain />;
-  return <TrendBox />;
-  // return <ArticleMain />;
+  // return <TrendBox />;
+  return <ArticleMain />;
   // return (
   //   <div>
   //     <CounterMain />

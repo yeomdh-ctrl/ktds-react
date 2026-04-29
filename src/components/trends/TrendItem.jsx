@@ -1,12 +1,10 @@
-import { useState } from "react";
-import trendData from "./trend.json";
-const TrendItem = () => {
-  const [{ items }] = useState(trendData);
-  console.log(items.today);
+const TrendItem = ({ item }) => {
   return (
-    <ul>
-      <li>{items.week}</li>
-    </ul>
+    <div>
+      <img src={item.poster} />
+      <div>{item.name}</div>
+      <div>{item.openDate}</div>
+    </div>
   );
 };
 export default TrendItem;

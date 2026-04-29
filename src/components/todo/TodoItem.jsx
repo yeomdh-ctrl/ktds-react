@@ -9,16 +9,16 @@ const TodoItem = ({ todo, onDoneChange }) => {
   const confirmRef = useRef();
 
   const { componentName } = useContext(TodoContext);
-  console.log("TodoItem:" + componentName);
+  console.log("TodoItem");
   if (!componentName || componentName !== "TodoList") {
     return <></>;
   }
 
   // props todo의 이름과 todo.todo의 이름이 같아서 객체 구조 분해 불가
   // todo.todo의 이름을 todoTask로 변경해서 할당
-  const { id, todo: todoTask, dueDate, priority } = todo;
+  const { id, task: todoTask, dueDate, priority } = todo;
   // 보기 편하게 doneClass를 만들어서 templates literal에 넣어준다
-  const doneClass = todo.isDone ? "done" : "";
+  const doneClass = todo.done ? "done" : "";
   const onDoneChangeHandler = () => {
     let message = "";
     if (checkboxRef.current.checked) {
@@ -29,7 +29,7 @@ const TodoItem = ({ todo, onDoneChange }) => {
     confirmRef.current.showConfirm(message);
   };
   const onConfirmOkClickHandler = () => {
-    onDoneChange(todo.id, !todo.isDone);
+    onDoneChange(todo.id, !todo.done);
   };
   const onConfirmCloseClickHandler = () => {};
   return (
@@ -43,10 +43,10 @@ const TodoItem = ({ todo, onDoneChange }) => {
         id={id}
         type="checkbox"
         ref={checkboxRef}
-        checked={todo.isDone}
+        checked={todo.done}
         onChange={onDoneChangeHandler}
       />
-      <label className={todo.isDone ? "done" : ""} htmlFor={id}>
+      <label className={todo.done ? "done" : ""} htmlFor={id}>
         {todoTask}
       </label>
       <span className={`due-date ${doneClass}`}>{dueDate}</span>

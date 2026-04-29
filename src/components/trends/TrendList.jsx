@@ -1,10 +1,6 @@
 import TrendItem from "./TrendItem.jsx";
 
-const TrendList = () => {
-  return (
-    <div>
-      <TrendItem />;
-    </div>
-  );
+const TrendList = ({ children }) => {
+  return <div>{children}</div>;
 };
 export default TrendList;
