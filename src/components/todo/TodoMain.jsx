@@ -1,6 +1,6 @@
 /** @format */
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect } from "react";
 import { StateTest } from "./StateTest.jsx";
 import TodoAppender from "./TodoAppender.jsx";
 import TodoHeader from "./TodoHeader.jsx";
@@ -8,12 +8,9 @@ import TodoList from "./TodoList.jsx";
 import TodoItem from "./TodoItem.jsx";
 import TodoGrid from "./TodoGrid.jsx";
 import AddCalculator from "./AddCalculator.jsx";
-import {
-  fetchAllDoneTodo,
-  fetchDoneTodo,
-  fetchTodoList,
-  fetchAddTodo,
-} from "../../http/todo/fetchTodo.js";
+import { fetchTodoList } from "../../http/todo/fetchTodo.js";
+import { useDispatch, useSelector } from "react-redux";
+import { todoAction } from "../../stores/toolkit/slices/todoSlice.js";
 
 // ecma function (fat arrow function)
 // const: 상수를 정의하는 키워드.
@@ -29,15 +26,20 @@ import {
 const TodoMain = () => {
   console.log("TodoMain");
 
-  const [cachedData, setCachedData] = useState([]);
+  // const [cachedData, setCachedData] = useState([]);
+  // ReactRedux Store에서 todo state를 가져온다
+  const { list: todoList } = useSelector((store) => store.todo);
+  // store의 state를 바꾸는 것
+  const storeDispatcher = useDispatch();
 
   const refreshTodoList = async () => {
-    const todoList = await fetchTodoList();
+    const fetchResult = await fetchTodoList();
 
-    setCachedData(todoList.body);
+    // setCachedData(todoList.body);
+    storeDispatcher(todoAction.refresh(fetchResult.body));
 
-    if (todoList.errors) {
-      alert(todoList.errors);
+    if (fetchResult.errors) {
+      alert(fetchResult.errors);
     }
   };
 
@@ -46,51 +48,6 @@ const TodoMain = () => {
     refreshTodoList();
   }, []);
 
-  const todoCount = useMemo(() => {
-    return {
-      all: cachedData.length,
-      // 완료된 todo만 찾아 그 갯수를 반환
-      done: cachedData.filter((todo) => todo.done).length,
-      // 완료 안된 todo만 찾아 그 갯수를 반환
-      process: cachedData.filter((todo) => !todo.done).length,
-    };
-  }, [cachedData]);
-
-  const onAllDoneChangeHandler = useCallback(async () => {
-    const allDoneResult = await fetchAllDoneTodo();
-    if (!allDoneResult.errors) {
-      refreshTodoList();
-    } else {
-      alert(allDoneResult.errors);
-    }
-  }, []);
-
-  // 특정 todo의 done 값을 반전시키는 함수.
-  // 이 함수를 TodoList에게 props로 전달.
-  // TodoList는 TodoItem에게 함수를 props 전달.
-  const onDoneChangeHandler = async (todoId) => {
-    const doneResult = await fetchDoneTodo(todoId);
-    if (!doneResult.errors) {
-      refreshTodoList();
-    } else {
-      alert(doneResult.errors);
-    }
-  };
-
-  const onSaveButtonClickHandler = useCallback(
-    async (todo, dueDate, priority) => {
-      console.log("저장합니다.");
-      // fetch --> 서버에게 todo를 등록하게 한다
-      const addResult = await fetchAddTodo(todo, dueDate, priority);
-      if (!addResult.errors) {
-        refreshTodoList();
-      } else {
-        alert(addResult.errors);
-      }
-    },
-    [],
-  );
-
   // 컴포넌트가 만들어줄 HTML Tag set를 반환.
   return (
     <div className="wrapper">
@@ -98,17 +55,10 @@ const TodoMain = () => {
       {/* <AddCalculator /> */}
       <header>React Todo</header>
       <TodoGrid>
-        <TodoHeader
-          count={todoCount}
-          onAllDoneChange={onAllDoneChangeHandler}
-        />
+        <TodoHeader />
         <TodoList>
-          {cachedData.map((todo) => (
-            <TodoItem
-              key={todo.id}
-              todo={todo}
-              onDoneChange={onDoneChangeHandler}
-            />
+          {todoList.map((todo) => (
+            <TodoItem key={todo.id} todo={todo} />
 
             // <TodoItemForChildren>
             //   <input id={todo.id} type="checkbox" />
@@ -119,7 +69,7 @@ const TodoMain = () => {
           ))}
         </TodoList>
       </TodoGrid>
-      <TodoAppender onSaveButtonClick={onSaveButtonClickHandler} />
+      <TodoAppender />
     </div>
   );
 };

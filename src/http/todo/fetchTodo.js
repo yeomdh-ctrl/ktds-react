@@ -85,6 +85,7 @@ export const fetchAddTodo = async (todo, dueDate, priority) => {
     });
     const addResult = await fetchResult.json();
     console.log(addResult);
+    return addResult;
   } catch (e) {
     return {
       status: 500,
