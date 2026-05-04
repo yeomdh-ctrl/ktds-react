@@ -1,6 +1,6 @@
 /** @format */
-// articles.json 파일 불러오기
 import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import ArticleHeader from "./ArticleHeader.jsx";
 import ArticleList from "./ArticleList.jsx";
 import ArticleWriter from "./ArticleWriter.jsx";
@@ -12,31 +12,26 @@ import {
 import { fetchLogin } from "../../http/articles/fetchLogin.js";
 import { isString } from "../../utils/type.js";
 import { getValidationResult } from "../../utils/errorHandler.js";
+import { articleAction } from "../../stores/toolkit/slices/articleSlice.js";
 
 const ArticleMain = () => {
-  // state를 변경했다!
-  // 컴포넌트가 재실행된다. (props의 전달 여부 관계 없이.)
   console.log("ArticleMain");
 
   const writerRef = useRef();
-
   const emailRef = useRef();
   const passwordRef = useRef();
 
+  const {
+    count,
+    result: articles,
+    pagination: { pageNo = 0, pageCount = 0 },
+  } = useSelector((store) => store.article);
+
+  const token = useSelector((store) => store.article.token);
+
+  const storeDispatcher = useDispatch();
+
   const [viewPageNo, setViewPageNo] = useState(0);
-  const [
-    {
-      count,
-      result: articles,
-      pagination: { pageNo = 0, pageCount = 0 },
-    },
-    setArticles,
-  ] = useState({
-    count: 0,
-    result: [],
-    pagination: {},
-  });
-  const [token, setToken] = useState();
   const [loginErrors, setLoginErrors] = useState();
 
   const onLoginButtonClickHandler = async () => {
@@ -44,7 +39,10 @@ const ArticleMain = () => {
       emailRef.current.value,
       passwordRef.current.value,
     );
-    setToken(loginResult.token);
+
+    if (loginResult.token) {
+      storeDispatcher(articleAction.setToken(loginResult.token));
+    }
 
     if (loginResult.error) {
       if (isString(loginResult.error)) {
@@ -61,18 +59,13 @@ const ArticleMain = () => {
 
   const refreshArticleList = async () => {
     const articleList = await fetchArticleList(viewPageNo);
-    /*  articleList의 구조
-    {
-      result: { count: 0, result: [] },
-      pagination: {},
-    }
-    */
+
     const {
       result: { count, result },
       pagination,
     } = articleList;
 
-    setArticles({ count, result, pagination });
+    storeDispatcher(articleAction.refresh({ count, result, pagination }));
 
     if (articleList.error) {
       alert(articleList.error);
@@ -109,7 +102,7 @@ const ArticleMain = () => {
             {loginErrors?.email && <div>{loginErrors.email}</div>}
           </div>
           <div>
-            <label htmlFor="w">Password</label>
+            <label htmlFor="password">Password</label>
             <input type="password" id="password" ref={passwordRef} />
             {loginErrors?.password && <div>{loginErrors.password}</div>}
           </div>
@@ -147,4 +140,5 @@ const ArticleMain = () => {
     </div>
   );
 };
+
 export default ArticleMain;

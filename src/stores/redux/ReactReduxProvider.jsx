@@ -35,6 +35,7 @@ const reactReduxReducer = (
       }),
     };
   }
+
   return store;
 };
 

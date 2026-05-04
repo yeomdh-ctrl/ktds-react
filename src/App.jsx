@@ -13,7 +13,7 @@ export default function App() {
   // return <TrendBox />;
   return (
     <ToolkitProvider>
-      <TodoMain />;
+      <ArticleMain />;
     </ToolkitProvider>
   );
   // return (
