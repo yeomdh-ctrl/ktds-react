@@ -1,10 +1,10 @@
 /** @format */
 
-import { useImperativeHandle, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Alert } from "../ui/Modals";
 import { isString } from "../../utils/type";
-import { getValidationResult } from "../../utils/errorHandler";
 import { useDispatch, useSelector } from "react-redux";
+import { articleThunks } from "../../stores/toolkit/slices/articleSlice";
 
 const Input = ({ id, title, type = "text", ref, ...props }) => {
   console.log("Input");
@@ -26,21 +26,13 @@ const Textarea = ({ id, title, ref, ...props }) => {
   );
 };
 
-const ArticleWriter = ({ errorHandleRef, onAddArticleClick }) => {
+const ArticleWriter = () => {
   console.log("ArticleWriter");
+  const token = useSelector((store) => store.article.token);
 
-  const [addError, setAddError] = useState();
-  useImperativeHandle(errorHandleRef, () => {
-    return {
-      setResponseError(fetchError) {
-        if (isString(fetchError)) {
-          setAddError(fetchError);
-        } else {
-          setAddError(getValidationResult(fetchError));
-        }
-      },
-    };
-  });
+  const {
+    error: { write: addError },
+  } = useSelector((store) => store.article);
 
   const [viewMode, setViewMode] = useState("button");
 
@@ -51,31 +43,32 @@ const ArticleWriter = ({ errorHandleRef, onAddArticleClick }) => {
   // dialog를 제어할 ref
   const alertRef = useRef();
 
-  const token = useSelector((store) => store.article.token);
+  const toolkitDispatcher = useDispatch();
 
   if (!token) {
     return <></>;
   }
 
   // 저장을 클릭하면 입력했던 값을 가져와 출력한다.
-  const onSaveButtonClickHandler = () => {
+  const onSaveButtonClickHandler = async () => {
     console.log(alertRef);
 
     if (!subjectRef.current.value) {
-      alertRef.current.showModal("제목을 입력해주세요");
+      alertRef.current.showModal("제목을 입력해주세요.");
       return;
     }
     if (!contentRef.current.value) {
-      alertRef.current.showModal("내용을 입력해주세요");
+      alertRef.current.showModal("내용을 입력해주세요.");
       return;
     }
 
-    onAddArticleClick(
-      subjectRef.current.value,
-      contentRef.current.value,
-      attachFileRef.current.files,
+    toolkitDispatcher(
+      articleThunks.write(
+        subjectRef.current.value,
+        contentRef.current.value,
+        attachFileRef.current.value,
+      ),
     );
-
     subjectRef.current.value = "";
     contentRef.current.value = "";
     attachFileRef.current.value = "";
@@ -108,6 +101,7 @@ const ArticleWriter = ({ errorHandleRef, onAddArticleClick }) => {
             ref={attachFileRef}
             multiple
           />
+
           <button
             type="button"
             className="positive-button"
