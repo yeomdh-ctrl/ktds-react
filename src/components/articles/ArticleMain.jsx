@@ -40,9 +40,7 @@ const ArticleMain = () => {
       passwordRef.current.value,
     );
 
-    if (loginResult.token) {
-      storeDispatcher(articleAction.setToken(loginResult.token));
-    }
+    storeDispatcher(articleAction.setToken(loginResult.token));
 
     if (loginResult.error) {
       if (isString(loginResult.error)) {

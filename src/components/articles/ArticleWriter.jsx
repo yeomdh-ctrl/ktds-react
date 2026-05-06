@@ -4,6 +4,7 @@ import { useImperativeHandle, useRef, useState } from "react";
 import { Alert } from "../ui/Modals";
 import { isString } from "../../utils/type";
 import { getValidationResult } from "../../utils/errorHandler";
+import { useDispatch, useSelector } from "react-redux";
 
 const Input = ({ id, title, type = "text", ref, ...props }) => {
   console.log("Input");
@@ -49,6 +50,12 @@ const ArticleWriter = ({ errorHandleRef, onAddArticleClick }) => {
 
   // dialog를 제어할 ref
   const alertRef = useRef();
+
+  const token = useSelector((store) => store.article.token);
+
+  if (!token) {
+    return <></>;
+  }
 
   // 저장을 클릭하면 입력했던 값을 가져와 출력한다.
   const onSaveButtonClickHandler = () => {
